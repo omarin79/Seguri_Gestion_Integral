@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecuriGestión Integral - Inicio</title> <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* --- COLORES INSTITUCIONALES (EJEMPLO - ¡REEMPLAZAR!) --- */
+        :root {
+            --color-institucional-primario: #003366; /* Azul oscuro */
+            --color-institucional-secundario: #f0f0f0; /* Gris claro */
+            --color-institucional-texto-header: #ffffff; /* Texto blanco para header */
+            --color-institucional-texto-footer: #333333; /* Texto oscuro para footer */
+            --color-enlaces: #0056b3; /* Azul medio para enlaces */
+            --watermark-opacity: 0.1; /* Opacidad de la marca de agua */
+        }
+        /* --- FIN COLORES INSTITUCIONALES --- */
+
+        /* Estilos Generales del Body */
+         body {
+             font-family: sans-serif;
+             margin: 0;
+             padding: 0;
+             background-color: var(--color-institucional-secundario);
+             position: relative;
+             min-height: 100vh; /* Asegura que el body ocupa al menos toda la altura */
+         }
+
+         /* Marca de Agua con Logo Central */
+         body::before {
+             content: '';
+             position: fixed;
+             top: 0;
+             left: 0;
+             right: 0;
+             bottom: 0;
+             background-image: url('../images/logo_central.jpg');
+             background-repeat: no-repeat;
+             background-position: center center;
+             background-size: 80vw auto; /* Ajusta el tamaño */
+             opacity: var(--watermark-opacity);
+             z-index: -1;
+             pointer-events: none;
+         }
+
+        /* Encabezado Unificado (SIEMPRE visible, fijo en la parte superior) */
+        header.main-header {
+            background-color: var(--color-institucional-primario);
+            padding: 5px 20px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed; /* Lo hace fijo en la ventana */
+            top: 0; /* Lo fija en la parte superior */
+            left: 0;
+            right: 0;
+            z-index: 100; /* Asegura que esté por encima de otros elementos */
+            height: 60px; /* Altura fija para calcular el padding del contenido */
+        }
+
+        /* Estilos Contenedor Logo Header */
+         .logo-container { }
+         #header-logo {
+             height: 50px; /* Ajusta según la altura del header */
+             width: auto;
+             vertical-align: middle;
+             display: inline-block;
+         }
+
+        /* Contenedor para Nav y User Info (Derecha) */
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Estilos de Navegación (Header) */
+        header nav.main-nav {
+           margin-right: 25px;
+           text-align: left;
+        }
+        header nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        header nav ul li {
+            display: inline-block;
+            margin-left: 15px;
+        }
+         header nav ul li a {
+            text-decoration: none;
+            color: var(--color-institucional-texto-header);
+            font-weight: bold;
+            padding: 5px 0;
+            display: inline-block;
+             cursor: pointer; /* Indica que es clickeable */
+         }
+         header nav ul li a:hover {
+            text-decoration: underline;
+            color: #dddddd;
+         }
+
+        /* Estilos Info Usuario (Header) */
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .user-info img {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 1px solid var(--color-institucional-texto-header);
+        }
+        .user-info span {
+            color: var(--color-institucional-texto-header);
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        /* --- Fin Estilos Encabezado --- */
+
+
+        /* Pie de Página Unificado (SIEMPRE visible, fijo en la parte inferior) */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--color-institucional-secundario);
+            color: var(--color-institucional-texto-footer);
+            border-top: 1px solid #ccc;
+            position: fixed; /* Lo hace fijo en la ventana */
+            bottom: 0; /* Lo fija en la parte inferior */
+            left: 0;
+            right: 0;
+            z-index: 100; /* Asegura que esté por encima de otros elementos */
+            height: 60px; /* Altura fija para calcular el padding del contenido */
+        }
+
+        /* Wrapper para el contenido principal para evitar que quede oculto detrás del header/footer fijos */
+        #content-wrapper {
+             padding-top: 70px; /* Añade padding igual o un poco mayor que la altura del header */
+             padding-bottom: 70px; /* Añade padding igual o un poco mayor que la altura del footer */
+             overflow-y: auto; /* Permite scroll si el contenido es largo */
+             height: calc(100vh - 140px); /* Calcula la altura para que quepa entre header y footer */
+             box-sizing: border-box; /* Incluye padding en el cálculo de altura */
+        }
+
+        /* Contenedores de Página: Oculta todas por defecto */
+        .page-content {
+            display: none; /* Todas las "páginas" están ocultas por defecto */
+            padding: 0 20px; /* Mantenemos padding horizontal */
+        }
+
+        /* Muestra solo la página activa */
+        .page-content.active {
+            display: block;
+        }
+
+        /* --- Estilos Específicos de Contenedores (de los HTML originales) --- */
+        /* Contenedores de Login, Registro, Olvido (similares) */
+        #login-page .login-container,
+        #registro-page .login-container,
+        #olvido-contrasena-page .login-container {
+            max-width: 400px;
+            /* Centrado sin margen superior/inferior, el padding del wrapper se encarga */
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+             /* Asegura que estos contenedores se ajusten dentro del wrapper */
+            min-height: calc(100vh - 140px - 40px); /* Ejemplo: Altura viewport - header - footer - padding vertical */
+             display: flex; /* Usa flexbox para centrar verticalmente dentro de sí mismo */
+             flex-direction: column;
+             justify-content: center;
+        }
+
+
+        /* Contenedor de Registro Visita */
+        #registro-visita-page .registro-container {
+            max-width: 800px; /* Ajusta según el tamaño original si era diferente */
+            /* Centrado sin margen superior/inferior */
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        /* Logo dentro de los contenedores de login/registro/olvido */
+        .login-container .logo,
+        .registro-container .logo {
+            max-width: 100px;
+            margin-bottom: 15px;
+             display: block; /* Asegura que se muestre correctamente con flex */
+             margin-left: auto;
+             margin-right: auto;
+        }
+
+        /* Estilos de Secciones dentro del Inicio y Páginas de Módulo */
+         #inicio-page section, /* Actualizado */
+         #mi-perfil-page section,
+         #plataforma-operativa-page section,
+         #talento-humano-page section,
+         #nomina-page section {
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 8px;
+            max-width: 800px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+             border: 1px solid #ddd;
+             background-color: #fff;
+             text-align: left;
+        }
+         #inicio-page section h1, #inicio-page section h2, /* Actualizado */
+         #mi-perfil-page section h1, #mi-perfil-page section h2,
+         #plataforma-operativa-page section h1, #plataforma-operativa-page section h2,
+         #talento-humano-page section h1, #talento-humano-page section h2,
+         #nomina-page section h1, #nomina-page section h2 {
+            border-bottom: 2px solid var(--color-institucional-primario);
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            color: var(--color-institucional-primario);
+        }
+        #inicio-page section ul, /* Actualizado */
+        #mi-perfil-page section ul,
+        #plataforma-operativa-page section ul,
+        #talento-humano-page section ul,
+        #nomina-page section ul {
+            list-style: disc;
+            padding-left: 25px;
+        }
+        #inicio-page section ul li, /* Actualizado */
+        #mi-perfil-page section ul li,
+        #plataforma-operativa-page section ul li,
+        #talento-humano-page section ul li,
+        #nomina-page section ul li {
+            margin-bottom: 12px;
+        }
+        #inicio-page section ul li a, /* Actualizado */
+        #mi-perfil-page section ul li a,
+        #plataforma-operativa-page section ul li a,
+        #talento-humano-page section ul li a,
+        #nomina-page section ul li a {
+            text-decoration: none;
+            color: var(--color-enlaces);
+        }
+         #inicio-page section ul li a:hover, /* Actualizado */
+         #mi-perfil-page section ul li a:hover,
+         #plataforma-operativa-page section ul li a:hover,
+         #talento_humano-page section ul li a:hover,
+         #nomina-page section ul li a:hover {
+            text-decoration: underline;
+         }
+
+        /* Estilos de formularios */
+        label { display: block; margin-top: 10px; text-align: left; font-weight: bold; }
+        input[type="text"], input[type="password"], input[type="date"], select, textarea, input[type="email"] {
+            width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 10px;
+            border: 1px solid #ccc; box-sizing: border-box;
+        }
+        button {
+            background-color: #0056b3; color: white; padding: 10px 15px;
+            border: none; cursor: pointer; margin-top: 10px;
+        }
+        button:hover { background-color: #004494; }
+        .login-links { margin-top: 15px; }
+        .login-links a { margin: 0 10px; color: #0056b3; text-decoration: none; cursor: pointer; }
+         .login-links a:hover { text-decoration: underline; }
+
+        /* Estilo del mensaje de error */
+        .error-message {
+            background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;
+            padding: 10px; margin-bottom: 10px; border-radius: 5px; display: none; /* Inicialmente oculto */
+        }
+
+        /* Estilos para el modal de confirmación */
+        .modal {
+            position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            background-color: white; padding: 20px; border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 1000; display: none; /* Inicialmente oculto */
+        }
+
+        /* Estilos de Fieldset */
+        fieldset { margin-top: 15px; border: 1px solid #ccc; padding: 10px; text-align: left; }
+        legend { font-weight: bold; }
+        fieldset div { margin-bottom: 5px; }
+
+
+        /* Media Queries */
+        @media (max-width: 600px) {
+            #login-page .login-container,
+            #registro-page .login-container,
+            #olvido-contrasena-page .login-container {
+                margin: 0 auto; /* Sin margen superior/inferior */
+                max-width: 90%;
+                min-height: calc(100vh - 140px - 40px); /* Altura ajustada */
+            }
+             #registro-visita-page .registro-container {
+                 margin: 0 auto;
+                 max-width: 90%;
+             }
+
+             header.main-header {
+                 height: auto; /* Altura automática para que el menú se ajuste si es necesario */
+                 flex-direction: column; /* Apila logo y nav en pantallas pequeñas */
+                 align-items: flex-start; /* Alinea al inicio */
+                 padding: 10px; /* Más padding */
+             }
+             header nav.main-nav {
+                 margin-right: 0;
+                 margin-top: 10px; /* Espacio entre logo y nav */
+                 text-align: center;
+                 width: 100%; /* Ocupa todo el ancho */
+             }
+             header nav ul {
+                 text-align: center; /* Centra los elementos del menú */
+             }
+             header nav ul li {
+                 margin: 5px 8px; /* Espacio entre elementos apilados o en línea */
+             }
+             .header-right {
+                 width: 100%;
+                 justify-content: center; /* Centra nav y user-info */
+                 flex-direction: column; /* Apila nav y user-info */
+             }
+             .user-info {
+                  margin-top: 10px;
+                  justify-content: center; /* Centra la info de usuario */
+             }
+
+             #content-wrapper {
+                 padding-top: 100px; /* Ajusta el padding para el header adaptable */
+                 padding-bottom: 70px;
+                 height: calc(100vh - 170px); /* Ajusta la altura calculada */
+             }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="main-header" id="app-header">
+        <div class="logo-container">
+             <img src="images/logo_segurigestion.png" alt="Logo SecuriGestión Integral" id="header-logo">
+        </div>
+
+        <div class="header-right">
+            <nav class="main-nav">
+                 <ul>
+                    <li><a href="#inicio">Inicio</a></li> <li><a href="#plataforma-operativa">Plataforma Operativa</a></li>
+                    <li><a href="#talento-humano">Talento Humano</a></li>
+                    <li><a href="#nomina">Nómina</a></li>
+                    <li><a href="#registro-visita">Registrar Visita</a></li>
+                    <li><a href="#mi-perfil">Mi Perfil</a></li>
+                    <li><a href="#logout">Cerrar Sesión</a></li> </ul>
+            </nav>
+            <div class="user-info">
+                 <img src="images/user2-160x160.jpg" alt="Foto de Usuario">
+                 <span id="logged-in-username">Invitado</span> </div>
+        </div>
+    </header>
+
+    <div id="content-wrapper">
+
+        <div id="login-page" class="page-content active">
+            <div class="login-container">
+                <img src="images/logo_jh.png" alt="Logo SecuriGestiónIntegral" class="logo">
+                <h1>SecuriGestiónIntegral</h1>
+                <form id="login-form">
+                    <div class="error-message" id="login-error-message">Ingreso errado / Contraseña errada</div>
+
+                    <label for="username">Nombre de usuario:</label>
+                    <input type="text" id="username" name="username" required>
+
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <div class="intentos-restantes" style="display: none;">Quedan X intentos</div>
+
+                    <button type="submit">Ingresar</button>
+
+                    <div class="login-links">
+                        <a href="#olvido-contrasena">Olvidó su contraseña?</a>
+                        <a href="#">Ayuda</a> <a href="#registro">Registrarse</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="registro-page" class="page-content">
+            <div class="login-container"> <img src="images/logo_jh.png" alt="Logo SecuriGestiónIntegral" class="logo">
+                <h1>Registro de Usuario</h1>
+                <form id="registro-form">
+                    <label for="nombre-completo">Nombre Completo:</label>
+                    <input type="text" id="nombre-completo" name="nombre-completo" required>
+
+                    <label for="email-registro">Correo Electrónico:</label>
+                    <input type="email" id="email-registro" name="email-registro" required>
+
+                    <label for="password-registro">Contraseña:</label>
+                    <input type="password" id="password-registro" name="password-registro" required>
+
+                    <label for="confirmar-password">Confirmar Contraseña:</label>
+                    <input type="password" id="confirmar-password" name="confirmar-password" required>
+
+                    <button type="submit">Registrarse</button>
+
+                    <div class="login-links">
+                        <a href="#login">Ya tengo cuenta</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="olvido-contrasena-page" class="page-content">
+            <div class="login-container"> <img src="images/logo_jh.png" alt="Logo SecuriGestiónIntegral" class="logo">
+                <h1>Recuperar Contraseña</h1>
+                <p>Ingresa tu correo electrónico o nombre de usuario y te enviaremos instrucciones para restablecer tu contraseña.</p>
+                <form id="recuperar-form">
+                     <label for="email-recuperar">Correo Electrónico o Nombre de Usuario:</label>
+                    <input type="text" id="email-recuperar" name="email-recuperar" required>
+
+                    <button type="submit">Enviar Instrucciones</button>
+
+                    <div class="login-links">
+                         <a href="#login">Volver al Inicio de Sesión</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="inicio-page" class="page-content"> <main>
+                <h1>Inicio Principal</h1> <section id="seccion-mi-perfil-inicio"> <h2>Información del Usuario:</h2>
+                    <p>Aquí puedes ver tu información personal.</p>
+                    <ul>
+                        <li>Nombre: <span id="dashboard-username">OMAR ACONCHA CASTIBLANCO</span></li> <li>Correo: <span id="dashboard-email">omaracon@securigestion.com.co</span></li>
+                        <li>Rol: <span id="dashboard-role">Supervisor</span></li>
+                        <li><a href="#mi-perfil">Ver Perfil Completo</a></li> </ul>
+                </section>
+
+                <section id="seccion-plataforma-operativa-inicio"> <h1>Plataforma Operativa</h1>
+                    <h2>Módulos Disponibles:</h2>
+                    <ul>
+                        <li><a href="#plataforma-operativa">Gestión de Informes</a></li> <li><a href="#plataforma-operativa">Registro/Consulta de Novedades</a></li>
+                        <li><a href="#plataforma-operativa">Reporte de Condiciones Inseguras</a></li>
+                        <li><a href="#plataforma-operativa">Visualización de Alertas</a></li>
+                    </ul>
+                </section>
+
+                <section id="seccion-talento-humano-inicio"> <h1>Talento Humano</h1>
+                    <h2>Gestión Documental:</h2>
+                    <ul>
+                        <li><a href="#talento-humano">Gestión de Cartas Laborales</a></li>
+                        </ul>
+                     <h2>Módulos Disponibles:</h2> <ul>
+                        <li><a href="#plataforma-operativa">Gestión de Informes</a></li>
+                        <li><a href="#plataforma-operativa">Registro/Consulta de Novedades</a></li>
+                        <li><a href="#plataforma-operativa">Reporte de Condiciones Inseguras</a></li>
+                        <li><a href="#plataforma-operativa">Visualización de Alertas</a></li>
+                    </ul>
+                </section>
+
+                <section id="seccion-nomina-inicio"> <h1>Nómina</h1>
+                    <h2>Consultas y Reportes:</h2>
+                    <ul>
+                        <li><a href="#nomina">Generar Reportes</a></li>
+                        <li><a href="#nomina">Consultar/Descargar Desprendibles de Pago</a></li>
+                        <li><a href="#nomina">Generar Certificados</a></li>
+                    </ul>
+                    <h2>Módulos Disponibles:</h2> <ul>
+                        <li><a href="#plataforma-operativa">Gestión de Informes</a></li>
+                        <li><a href="#plataforma-operativa">Registro/Consulta de Novedades</a></li>
+                        <li><a href="#plataforma-operativa">Reporte de Condiciones Inseguras</a></li>
+                        <li><a href="#plataforma-operativa">Visualización de Alertas</a></li>
+                    </ul>
+                </section>
+            </main>
+        </div>
+
+        <div id="mi-perfil-page" class="page-content">
+            <main>
+                <section>
+                    <h2>Información del Usuario:</h2>
+                    <p>Aquí puedes ver tu información personal.</p>
+                    <ul>
+                        <li>Nombre: <span id="mi-perfil-username">OMAR ACONCHA CASTIBLANCO</span></li> <li>Correo: <span id="mi-perfil-email">omaracon@securigestion.com.co</span></li>
+                        <li>Rol: <span id="mi-perfil-role">Supervisor</span></li>
+                        <li><a href="#">Cambiar Contraseña</a></li> </ul>
+                </section>
+
+                <section>
+                    <h2>Módulos Disponibles (Acceso Rápido):</h2>
+                    <p>Accede a las diferentes funcionalidades del sistema:</p>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li> <li><a href="#plataforma-operativa">Plataforma Operativa</a></li>
+                        <li><a href="#talento-humano">Talento Humano</a></li>
+                        <li><a href="#nomina">Nómina</a></li>
+                        <li><a href="#registro-visita">Registrar Nueva Visita</a></li>
+                        <li><a href="#logout">Cerrar Sesión</a></li>
+                     </ul>
+                </section>
+            </main>
+        </div>
+
+        <div id="plataforma-operativa-page" class="page-content">
+            <main>
+                <section>
+                    <h1>Plataforma Operativa</h1>
+                    <h2>Módulos Disponibles</h2>
+                    <p>Seleccione la opción que desea gestionar:</p>
+                    <ul>
+                        <li><a href="#">Gestión de Informes</a></li> <li><a href="#">Registro/Consulta de Novedades</a></li>
+                        <li><a href="#">Reporte de Condiciones Inseguras</a></li>
+                        <li><a href="#">Visualización de Alertas</a></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Otros Módulos (Acceso Rápido)</h2>
+                    <ul>
+                         <li><a href="#inicio">Inicio</a></li> <li><a href="#talento-humano">Talento Humano</a></li>
+                        <li><a href="#nomina">Nómina</a></li>
+                        <li><a href="#registro-visita">Registrar Nueva Visita</a></li>
+                        <li><a href="#mi-perfil">Mi Perfil</a></li>
+                        <li><a href="#logout">Cerrar Sesión</a></li>
+                    </ul>
+                </section>
+            </main>
+        </div>
+
+        <div id="talento-humano-page" class="page-content">
+            <main>
+                <section>
+                    <h1>Talento Humano</h1>
+                    <h2>Gestión Documental</h2>
+                    <p>Seleccione la opción que desea realizar:</p>
+                    <ul>
+                        <li><a href="#">Gestión de Cartas Laborales</a></li>
+                        </ul>
+                    </section>
+
+                <section>
+                    <h2>Otros Módulos (Acceso Rápido)</h2>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li> <li><a href="#plataforma-operativa">Plataforma Operativa</a></li>
+                        <li><a href="#nomina">Nómina</a></li>
+                        <li><a href="#registro-visita">Registrar Nueva Visita</a></li>
+                        <li><a href="#mi-perfil">Mi Perfil</a></li>
+                        <li><a href="#logout">Cerrar Sesión</a></li>
+                    </ul>
+                </section>
+            </main>
+        </div>
+
+        <div id="nomina-page" class="page-content">
+            <main>
+                <section>
+                    <h1>Nómina</h1>
+                    <h2>Consultas y Reportes</h2>
+                    <p>Seleccione la opción que desea realizar:</p>
+                    <ul>
+                        <li><a href="#">Generar Reportes</a></li>
+                        <li><a href="#">Consultar/Descargar Desprendibles de Pago</a></li>
+                        <li><a href="#">Generar Certificados</a></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Otros Módulos (Acceso Rápido)</h2>
+                    <ul>
+                         <li><a href="#inicio">Inicio</a></li> <li><a href="#plataforma-operativa">Plataforma Operativa</a></li>
+                        <li><a href="#talento-humano">Talento Humano</a></li>
+                        <li><a href="#registro-visita">Registrar Nueva Visita</a></li>
+                        <li><a href="#mi-perfil">Mi Perfil</a></li>
+                        <li><a href="#logout">Cerrar Sesión</a></li>
+                    </ul>
+                </section>
+            </main>
+        </div>
+
+         <div id="registro-visita-page" class="page-content">
+             <main class="registro-container"> <img src="images/logo_jh.png" alt="Logo JH SAS" class="logo">
+                 <h1>Registro de Visita de Supervisión</h1>
+                 <form id="visita-form">
+                     <label for="fecha-visita">Fecha:</label>
+                     <input type="date" id="fecha-visita" name="fecha-visita" value="2025-03-06" required>
+                     <label for="puesto">1. Seleccionar puesto a visitar:</label>
+                     <select id="puesto" name="puesto" required>
+                         <option value="">Seleccione...</option>
+                         <option value="1">Recepción Principal Edificio ABC</option>
+                         <option value="2">Portería Vehicular La Floresta</option>
+                     </select>
+
+                     <fieldset>
+                         <legend>Checklist Presentación:</legend>
+                         <div><input type="checkbox" id="item1" name="item1"><label for="item1">Porta uniforme completo</label></div>
+                         <div><input type="checkbox" id="item2" name="item2"><label for="item2">Porta carnet visible</label></div>
+                         <div><input type="checkbox" id="item3" name="item3"><label for="item3">Cumple protocolos establecidos</label></div>
+                          </fieldset>
+
+                     <label for="novedades-operativas">Novedades Operativas:</label>
+                     <textarea id="novedades-operativas" name="novedades-operativas" rows="3"></textarea>
+
+                     <label for="novedades-nomina">Novedades Nómina:</label>
+                     <textarea id="novedades-nomina" name="novedades-nomina" rows="3"></textarea>
+
+                     <button type="button" onclick="mostrarConfirmacionGuardar()">Guardar Visita</button>
+
+                     <div id="confirmacion-guardar" class="modal">
+                         <p>¿Desea guardar esta visita?</p>
+                         <button type="submit">Sí</button>
+                         <button type="button" onclick="cerrarConfirmacionGuardar()">No</button>
+                     </div>
+                 </form>
+             </main>
+         </div>
+        </div> <footer id="app-footer">
+        <p>&copy; 2025 SecuriGestión Integral</p>
+    </footer>
+
+
+    <script src="js/script.js"></script>
+    <script>
+        // --- JavaScript para el cambio de páginas y lógica de la SPA ---
+
+        // Obtiene todos los contenedores de página
+        const pageContents = document.querySelectorAll('.page-content');
+        const appHeader = document.getElementById('app-header');
+        const appFooter = document.getElementById('app-footer');
+        const loggedInUsernameSpan = document.getElementById('logged-in-username'); // Span para el nombre en el header
+
+        // Función para mostrar una página específica y ocultar las demás
+        function showPage(pageId) {
+            pageContents.forEach(page => {
+                if (page.id === pageId) {
+                    page.classList.add('active');
+                    page.style.display = 'block'; // Asegura que se muestre
+                } else {
+                    page.classList.remove('active');
+                    page.style.display = 'none'; // Oculta las otras páginas
+                }
+            });
+
+            // --- El encabezado y pie de página son ahora SIEMPRE visibles vía CSS ---
+            // Ya no necesitamos controlar su display aquí.
+
+            // Opcional: Actualizar la URL con el hash de la página (ej: #inicio)
+            // Esto ayuda a la navegación (botón atrás/adelante básico)
+            const hash = pageId.replace('-page', ''); // Convierte 'inicio-page' a 'inicio'
+
+            // No actualizamos el hash si es la página de login, a menos que hubiera un hash antes
+            if (hash === 'login' && window.location.hash !== '') {
+                 // Si vamos al login y había un hash, lo limpiamos
+                 history.pushState(null, '', window.location.pathname + window.location.search);
+            } else if (window.location.hash !== '#' + hash && hash !== 'login') {
+                 // Actualizamos el hash solo si cambia y no es la navegación inicial al login sin hash
+                 history.pushState(null, '', '#' + hash);
+            }
+
+
+            // Desplazar al inicio del wrapper de contenido al cambiar
+            const contentWrapper = document.getElementById('content-wrapper');
+            if (contentWrapper) {
+                contentWrapper.scrollTo(0, 0); // Desplaza el wrapper interno
+            } else {
+                 window.scrollTo(0, 0); // Si no hay wrapper, desplaza la ventana
+            }
+
+            // Opcional: Si la página mostrada es post-login, asegúrate de que el nombre de usuario en el header sea correcto.
+            // Esto requeriría almacenar el nombre de usuario después del login.
+             // const postLoginPages = ['inicio-page', 'mi-perfil-page', 'plataforma-operativa-page', 'talento-humano-page', 'nomina-page', 'registro-visita-page'];
+             // if (loggedInUsernameSpan && postLoginPages.includes(pageId)) {
+             //    loggedInUsernameSpan.textContent = /* Nombre de usuario logueado */;
+             // } else if (loggedInUsernameSpan) {
+             //     loggedInUsernameSpan.textContent = 'Invitado'; // Reset para páginas pre-login
+             // }
+        }
+
+        // --- Manejo de Eventos para Navegación (usando delegación) ---
+
+        // Escucha clics en cualquier parte del body
+        document.body.addEventListener('click', function(event) {
+            const target = event.target;
+
+            // Verifica si el elemento clickeado es un enlace <a>
+            if (target.tagName === 'A') {
+                const href = target.getAttribute('href');
+
+                // Si el href comienza con '#', es un enlace interno a una "página" o sección
+                if (href && href.startsWith('#')) {
+                    event.preventDefault(); // Previene la acción por defecto del enlace
+
+                    const targetHash = href.substring(1); // Obtiene 'inicio' de '#inicio'
+                    const pageId = targetHash + '-page'; // Convierte 'inicio' a 'inicio-page'
+
+                    // Maneja enlaces de navegación principales y enlaces internos a secciones
+                    if (targetHash === 'logout') { // Manejar el enlace de cerrar sesión específicamente
+                         // Aquí iría tu lógica de logout (limpiar sesión, tokens, etc.)
+                         alert('Cerrando sesión (simulado)'); // Simulación
+                         showPage('login-page'); // Regresar a la página de login
+                         // Reset user info in header
+                         if(loggedInUsernameSpan) loggedInUsernameSpan.textContent = 'Invitado';
+
+                    } else if (document.getElementById(pageId)) { // Verifica si existe un contenedor con ese ID (es una página)
+                         showPage(pageId); // Muestra la página correspondiente
+                    } else if (document.getElementById(targetHash)) { // Verifica si es un enlace a una sección dentro de la página actual (ej. en el inicio)
+                        // Es un enlace a una sección dentro de la página actual, no cambia de página principal
+                        const section = document.getElementById(targetHash);
+                        section.scrollIntoView({ behavior: 'smooth' }); // Desplazamiento suave a la sección
+                    }
+                     // Puedes añadir manejo para otros hashes si es necesario
+                }
+                // Nota: Los enlaces que no empiezan con '#' (ej. externos o # en blanco) tendrán su comportamiento por defecto o serán ignorados.
+            }
+        });
+
+
+        // --- Manejo de Envío de Formularios ---
+
+        // 1. Formulario de Login
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Evita el envío real del formulario
+
+                const usernameInput = document.getElementById('username');
+                const passwordInput = document.getElementById('password');
+                const errorMessageDiv = document.getElementById('login-error-message');
+
+                const username = usernameInput.value;
+                const password = passwordInput.value;
+
+                // --- Lógica de validación y autenticación (¡Implementa tu lógica real aquí!) ---
+                // Esto es una simulación:
+                if (username === 'usuario' && password === 'contraseña') {
+                    errorMessageDiv.style.display = 'none';
+                    // --- Login exitoso ---
+                    // Actualiza el nombre de usuario en el encabezado
+                     if (loggedInUsernameSpan) {
+                         loggedInUsernameSpan.textContent = username.toUpperCase();
+                     }
+                     // Actualiza la info del usuario en las páginas Mi Perfil e Inicio (requiere más JS)
+                     if(document.getElementById('dashboard-username')) document.getElementById('dashboard-username').textContent = username.toUpperCase();
+                     if(document.getElementById('mi-perfil-username')) document.getElementById('mi-perfil-username').textContent = username.toUpperCase();
+
+
+                    showPage('inicio-page'); // Muestra la página de Inicio (antes dashboard)
+                    // Puedes guardar el estado de login (ej. en localStorage) aquí
+                } else {
+                    // --- Login fallido ---
+                    errorMessageDiv.style.display = 'block';
+                    errorMessageDiv.textContent = 'Nombre de usuario o contraseña incorrectos.';
+                    // Lógica para intentos restantes si la tienes
+                }
+            });
+        }
+
+        // 2. Formulario de Registro
+        const registroForm = document.getElementById('registro-form');
+         if (registroForm) {
+             registroForm.addEventListener('submit', function(event) {
+                 event.preventDefault(); // Evita el envío real
+
+                 // --- Lógica de registro (¡Implementa tu lógica real aquí!) ---
+                 alert('Registro simulado exitoso.'); // Simulación de registro
+                 // Redirigir a la página de login después del registro exitoso
+                 showPage('login-page');
+                 this.reset(); // Limpiar formulario
+             });
+         }
+
+        // 3. Formulario Olvido Contraseña
+        const recuperarForm = document.getElementById('recuperar-form');
+         if (recuperarForm) {
+             recuperarForm.addEventListener('submit', function(event) {
+                 event.preventDefault(); // Evita el envío real
+
+                 // --- Lógica de recuperación (¡Implementa tu lógica real aquí!) ---
+                 alert('Instrucciones de recuperación enviadas (simulado).'); // Simulación
+                 // Redirigir a la página de login
+                 showPage('login-page');
+                  this.reset(); // Limpiar formulario
+             });
+         }
+
+        // 4. Formulario Registro Visita
+         const visitaForm = document.getElementById('visita-form');
+         if (visitaForm) {
+              // La lógica del modal mostrarConfirmacionGuardar/cerrarConfirmacionGuardar debe estar disponible
+              // Asegúrate de que esas funciones estén en script.js o cópialas aquí.
+              // El botón "Sí" del modal ya tiene type="submit", por lo que activará este listener.
+             visitaForm.addEventListener('submit', function(event) {
+                 event.preventDefault(); // Evita el envío real
+
+                 // --- Lógica para guardar la visita (¡Implementa tu lógica real aquí!) ---
+                 alert('Visita guardada exitosamente (simulado).'); // Simulación de guardado
+                 cerrarConfirmacionGuardar(); // Cierra el modal después de "guardar"
+                 // Decide qué hacer después de guardar: quedarse, ir al inicio, etc.
+                 // showPage('inicio-page'); // Ejemplo: ir al inicio después de guardar
+                 this.reset(); // Limpiar formulario si te quedas o vas a otra página similar
+                 // Optional: Mostrar un mensaje de éxito en la página.
+             });
+         }
+
+
+        // --- Funciones del Modal (Copiadas de script.js si no está incluido o adaptado) ---
+        // Asegúrate de que estas funciones estén definidas y disponibles globalmente.
+        // Si estás enlazando script.js, verifica que no tengan conflictos o estén en un scope correcto.
+        // Si eliminas script.js, cópialas aquí:
+        function mostrarConfirmacionGuardar() {
+            const modal = document.getElementById('confirmacion-guardar');
+            if (modal) {
+                modal.style.display = 'block';
+            }
+        }
+
+        function cerrarConfirmacionGuardar() {
+            const modal = document.getElementById('confirmacion-guardar');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+
+        // --- Lógica de Inicialización ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Determina qué página mostrar al cargar basándose en el hash
+            const initialHash = window.location.hash.substring(1); // Obtiene 'inicio' de '#inicio'
+            // Lista de hashes válidos que corresponden a IDs de página
+            const validPageHashes = ['login', 'registro', 'olvido-contrasena', 'inicio', 'mi-perfil', 'plataforma-operativa', 'talento-humano', 'nomina', 'registro-visita'];
+
+
+            if (initialHash && validPageHashes.includes(initialHash)) {
+                showPage(initialHash + '-page'); // Muestra la página correspondiente al hash si es válido
+            } else {
+                // Si no hay hash válido o no está presente, muestra la página de login por defecto
+                showPage('login-page');
+            }
+
+            // Escuchar cambios en el hash de la URL (para navegación con botón atrás/adelante del navegador)
+            window.addEventListener('hashchange', () => {
+                const hash = window.location.hash.substring(1);
+                if (hash === '') { // Manejar caso donde el hash se limpia (ej. manualmente o logout)
+                    showPage('login-page');
+                } else if (validPageHashes.includes(hash)) {
+                    showPage(hash + '-page');
+                } else {
+                     // Manejar hash inválido - podrías redirigir al login o mostrar un error
+                     console.warn('Hash inválido en la URL:', window.location.hash);
+                    // showPage('login-page'); // Opcional: redirigir al login
+                }
+            });
+
+        });
+
+        // --- Fin JavaScript ---
+    </script>
+</body>
+</html>

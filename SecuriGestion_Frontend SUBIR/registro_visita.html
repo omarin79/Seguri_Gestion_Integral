@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Visita - SecuriGestión</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Registro de Visita de Supervisión</h1> 
+    </header>
+    <main class="registro-container">
+        <img src="images/logo_jh.png" alt="Logo JH SAS" class="logo">
+        <form id="visita-form">
+            <label for="fecha-visita">Fecha:</label>
+            <input type="date" id="fecha-visita" name="fecha-visita" value="2025-03-06" required> <label for="puesto">1. Seleccionar puesto a visitar:</label>
+            <select id="puesto" name="puesto" required>
+                <option value="">Seleccione...</option>
+                <option value="1">Recepción Principal Edificio ABC</option> 
+                <option value="2">Portería Vehicular La Floresta</option>
+            </select>
+
+            <fieldset>
+                <legend>Checklist Presentación:</legend>
+                <div><input type="checkbox" id="item1" name="item1"><label for="item1">Porta uniforme completo</label></div>
+                <div><input type="checkbox" id="item2" name="item2"><label for="item2">Porta carnet visible</label></div>
+                <div><input type="checkbox" id="item3" name="item3"><label for="item3">Cumple protocolos establecidos</label></div> 
+                 </fieldset>
+
+            <label for="novedades-operativas">Novedades Operativas:</label>
+            <textarea id="novedades-operativas" name="novedades-operativas" rows="3"></textarea>
+
+            <label for="novedades-nomina">Novedades Nómina:</label>
+            <textarea id="novedades-nomina" name="novedades-nomina" rows="3"></textarea>
+
+            <button type="button" onclick="mostrarConfirmacionGuardar()">Guardar Visita</button> 
+
+            <div id="confirmacion-guardar" class="modal" style="display:none;">
+                <p>¿Desea guardar esta visita?</p>
+                <button type="submit">Sí</button>
+                <button type="button" onclick="cerrarConfirmacionGuardar()">No</button>
+            </div>
+        </form>
+    </main>
+    <script src="js/script.js"></script> 
+</body>
+</html>

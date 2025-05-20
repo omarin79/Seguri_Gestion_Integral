@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - SecuriGestión</title> 
+    <link rel="stylesheet" href="css/style.css"> 
+    <style>
+        /* --- COLORES INSTITUCIONALES (EJEMPLO - ¡REEMPLAZAR!) --- */
+        /* Institutional Colors (Example - Replace!) */
+        :root {
+            --color-institucional-primario: #003366; /* Azul oscuro / Dark Blue */
+            --color-institucional-secundario: #f0f0f0; /* Gris claro / Light Gray */
+            --color-institucional-texto-header: #ffffff; /* Texto blanco para header / White text for header */
+            --color-institucional-texto-footer: #333333; /* Texto oscuro para footer / Dark text for footer */
+            --color-enlaces: #0056b3; /* Azul medio para enlaces / Medium blue for links */
+            --watermark-opacity: 0.1; /* Opacidad de la marca de agua / Watermark opacity */
+        }
+        /* --- FIN COLORES INSTITUCIONALES --- */
+
+        /* Header Layout Styles */
+        header.main-header {
+            background-color: var(--color-institucional-primario); /* Primary color for header */
+            padding: 5px 20px; 
+            border-bottom: 1px solid #dee2e6; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; /* Space out logo and right-side elements */
+            position: relative; /* Needed for z-index context if header needs to be above watermark */
+            z-index: 10; 
+        }
+
+        /* Logo Container Styles (Left) */
+         .logo-container { 
+             /* No specific alignment needed, it's the first item */
+         }
+         #header-logo {
+             height: 50px; 
+             width: auto; 
+             vertical-align: middle; 
+             display: inline-block; 
+         }
+        
+        /* Container for elements on the right side of the header (Nav + User) */
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Navigation Styles (Inside header-right) */
+        header nav.main-nav {
+           margin-right: 25px; /* Space between nav and user info */
+        }
+        header nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0; 
+        }
+        header nav ul li {
+            display: inline-block; 
+            margin-left: 15px; /* Space between nav items */
+        }
+         header nav ul li a {
+            text-decoration: none;
+            color: var(--color-institucional-texto-header); 
+            font-weight: bold;
+            padding: 5px 0; 
+            display: inline-block; 
+         }
+         header nav ul li a:hover {
+            text-decoration: underline;
+            color: #dddddd; 
+         }
+
+        /* User Info Styles (Inside header-right) */
+        .user-info {
+            display: flex;
+            align-items: center;
+            /* No specific justification needed as it's the last item in header-right */
+        }
+
+        .user-info img {
+            height: 40px; 
+            width: 40px;
+            border-radius: 50%; 
+            margin-right: 10px; 
+            border: 1px solid var(--color-institucional-texto-header); 
+        }
+
+        .user-info span {
+            color: var(--color-institucional-texto-header);
+            font-weight: bold;
+            white-space: nowrap; /* Prevent name from wrapping */
+        }
+        /* --- End Header Layout Styles --- */
+
+
+        /* Styles for main content area */
+        main {
+            padding: 20px;
+            text-align: center; /* Center content within main */
+            position: relative; /* Needed for z-index context */
+            z-index: 1; /* Ensure main content is above the watermark */
+        }
+        
+        /* REMOVED Styles for the central logo image */
+        /* #central-logo-img { ... } */
+
+        /* Styles for sections below the central logo */
+        main section {
+            padding: 20px; 
+            margin: 20px auto; 
+            border-radius: 8px;
+            max-width: 800px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15); 
+             border: 1px solid #ddd; 
+             background-color: #fff; /* White background for sections for better contrast */
+             text-align: left; /* Reset text alignment for sections */
+        }
+        main section h2 {
+            border-bottom: 2px solid var(--color-institucional-primario); 
+            padding-bottom: 8px; 
+            margin-bottom: 20px; 
+            color: var(--color-institucional-primario); 
+        }
+        main section ul {
+            list-style: disc; 
+            padding-left: 25px; 
+        }
+        main section ul li {
+            margin-bottom: 12px; 
+        }
+        main section ul li a {
+            text-decoration: none;
+            color: var(--color-enlaces); 
+        }
+         main section ul li a:hover {
+            text-decoration: underline;
+         }
+         
+         /* Basic body style */
+         body {
+             font-family: sans-serif; 
+             margin: 0;
+             padding: 0;
+             background-color: var(--color-institucional-secundario); /* Use secondary color as base background */
+             position: relative; /* Needed for pseudo-element positioning */
+             min-height: 100vh; /* Ensure body takes full height */
+         }
+
+         /* Watermark using pseudo-element */
+         body::before {
+             content: '';
+             position: fixed; /* Fixed position to cover viewport */
+             top: 0;
+             left: 0;
+             right: 0;
+             bottom: 0;
+             background-image: url('../images/logo_central.jpg'); /* Watermark image */
+             background-repeat: no-repeat;
+             background-position: center center;
+             /* --- TAMAÑO DE MARCA DE AGUA AJUSTADO --- */
+             /* Ajusta el tamaño para que ocupe el 80% del ancho de la ventana, altura automática */
+             background-size: 80vw auto; 
+             /* Alternativas: */
+             /* background-size: contain; */ /* Asegura que toda la imagen sea visible */
+             /* background-size: cover; */ /* Cubre todo el fondo, puede cortar la imagen */
+             /* background-size: 90% auto; */ /* Otro tamaño porcentual */
+             /* --- FIN AJUSTE TAMAÑO --- */
+             opacity: var(--watermark-opacity); /* Control transparency */
+             z-index: -1; /* Place behind all content */
+             pointer-events: none; /* Make it unclickable */
+         }
+
+
+         /* Footer style */
+         footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px; 
+            background-color: var(--color-institucional-secundario); 
+            color: var(--color-institucional-texto-footer); 
+            border-top: 1px solid #ccc; 
+            position: relative; /* Needed for z-index context */
+            z-index: 10; /* Ensure footer is above watermark */
+         }
+         
+    </style>
+</head>
+<body>
+    <header class="main-header"> 
+        
+        <div class="logo-container">
+             <img src="images/logo_segurigestion.png" alt="Logo SecuriGestión Integral" id="header-logo"> 
+        </div>
+        
+        <div class="header-right">
+            <nav class="main-nav">
+                 <ul>
+                    <li><a href="index.html">Login</a></li>
+                    <li><a href="registro_visita.html">Registrar Visita</a></li>
+                    <li><a href="plataforma_operativa.html">Plataforma Operativa</a></li>
+                    <li><a href="talento_humano.html">Talento Humano</a></li>
+                    <li><a href="nomina.html">Nómina</a></li>
+                    <li><a href="mi_perfil.html">Mi Perfil</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                <img src="images/user2-160x160.jpg" alt="Foto de Usuario">
+                 <span>OMAR ACONCHA CASTIBLANCO</span>
+            </div>
+        </div> 
+        </header>
+
+    <main>
+        <section>
+            <h2>Información del Usuario:</h2>
+            <p>Aquí puedes ver tu información personal.</p>
+            <ul>
+                <li>Nombre: OMAR ACONCHA CASTIBLANCO</li> 
+                <li>Correo: omaracon@securigestion.com.co</li> 
+                <li>Rol: Supervisor</li> 
+                <li><a href="#">Cambiar Contraseña</a></li> 
+            </ul>
+        </section>
+
+        <section>
+            <h2>Módulos Disponibles (Acceso Rápido):</h2>
+            <p>Accede a las diferentes funcionalidades del sistema:</p>
+            <ul>
+                <li><a href="plataforma_operativa.html">Plataforma Operativa</a></li> 
+                <li><a href="talento_humano.html">Talento Humano</a></li> 
+                <li><a href="nomina.html">Nómina</a></li> 
+                <li><a href="registro_visita.html">Registrar Nueva Visita</a></li> 
+                <li><a href="index.html">Cerrar Sesión (Login)</a></li> </ul>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 SecuriGestión Integral</p>
+    </footer>
+
+    </body>
+</html>

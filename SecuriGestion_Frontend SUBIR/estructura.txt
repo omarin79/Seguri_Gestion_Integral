@@ -1,0 +1,60 @@
++-----------------+
+|  Inicio (Login) |
+|   (index.html)  |
+|                 |
+| - Formulario    | ----------------+ (Inicio de sesión exitoso)
+|   de Login      |                 |
+|                 |                 |
+| - Registrarse   | --------------->+---------------------+
+|                 |                 |  Página de Registro |
+| - Olvidó su     | --------------->+---------------------+
+|   contraseña?   |                 |    (registro.html)  |
+|                 |                 |                     |
+| - Ayuda         |  ---+           | - Formulario        |
++-----------------+      |          |   de Registro       |
+                         |          | - Volver al Login   | -------->+-----------------+
+                         |          +---------------------+          |  Inicio (Login) |
+                         |                                           |   (index.html)  |
+                         +---------------------+                     +-----------------+
+                                               |
+                                               |
+                                               +---------------------+
+                                               |  Página Olvidó su   |
+                                               |    Contraseña       |
+                                               +---------------------+
+                                               | (olvido_contrasena.html)|
+                                               |                     |
+                                               | - Formulario de     |
+                                               |   Recuperación      |
+                                               | - Volver al Login   | -------->+-----------------+
+                                               +---------------------+          |  Inicio (Login) |
+                                                                                |   (index.html)  |
+                                                                                +-----------------+
+
+
+(Desde el Inicio de Sesión Exitoso)
+        |
+        V
++-----------------------------------------------------------------------+
+|                     Páginas Principales (Logueado)                      |
+|  (Comparten el mismo menú de navegación en el encabezado)             |
++-----------------------------------------------------------------------+
+        |         |           |               |               |
+        |         |           |               |               |
+        V         V           V               V               V
++---------------+ +---------------------+ +-------------+ +---------------+ +-------------------+
+|   Mi Perfil   | | Plataforma Operativa| |    Nómina   | | Talento Humano| | Registro de Visita|
+| (mi_perfil.html)| (plataforma_operativa.| (nomina.html)| (talento_humano.| (registro_visita.html)|
+|               |  html)                |               |  html)          |                   |
+| - Info. Usuario|                       |               |                 | - Formulario      |
+| - Acceso Rápido|                       |               |                 |   de Visita       |
+|   a módulos   |                       |               |                 |                   |
+| - Cerrar Sesión|---------------------->| Regresa al    |                 |                   |
+|               |                       | Login         |                 |                   |
++---------------+                       +---------------+                 +-------------------+
+        ^                                       ^
+        |                                       |
+        +---------------------------------------+
+          (Menú de navegación en el encabezado:
+           Enlaces a Plataforma Operativa, Talento Humano, Nómina,
+           Mi Perfil, Registrar Visita, Login/Cerrar Sesión)
