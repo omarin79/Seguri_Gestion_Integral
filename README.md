@@ -1,0 +1,2 @@
+# Seguri_Gestion_Integral
+Mi_proyecto_ Seguri_Gestion_Integral
