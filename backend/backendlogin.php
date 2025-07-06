@@ -1,24 +1,16 @@
 <?php
-// backend/login.php
+// backend/backendlogin.php
 
-// Inicia una sesión para guardar que el usuario ha ingresado
 session_start();
+require_once 'backenddb.php'; // Llama a tu archivo de conexión
 
-// Incluye el archivo de conexión a la base deatos
-require_once 'db.php';
-
-// Prepara la respuesta que se enviará en formato JSON
 header('Content-Type: application/json');
 
-// Recibe el nombre de usuario (cédula) y la contraseña del formulario
-$username = $_POST['username'] ?? '';
+$username = $_POST['username'] ?? ''; // Esto será el 'documento'
 $password = $_POST['password'] ?? '';
 
-// --- Validación Segura con Consultas Preparadas ---
-// Esto previene ataques de inyección SQL
-
-// 1. Prepara la consulta SQL
-$sql = "SELECT id, nombre, email, rol, contrasena_hash FROM usuarios WHERE cedula = ?";
+// Usamos la tabla 'personal' y la columna 'documento'
+$sql = "SELECT id_personal, nombre, email, cargo, contrasena_hash FROM personal WHERE documento = ?";
 $stmt = $conexion->prepare($sql);
 
 if ($stmt === false) {
@@ -26,46 +18,37 @@ if ($stmt === false) {
     exit();
 }
 
-// 2. Vincula el parámetro (la cédula del usuario) a la consulta
 $stmt->bind_param("s", $username);
-
-// 3. Ejecuta la consulta
 $stmt->execute();
-
-// 4. Obtiene el resultado
 $resultado = $stmt->get_result();
 
 if ($resultado->num_rows === 1) {
     $usuario = $resultado->fetch_assoc();
 
-    // 5. Verifica la contraseña
-    // La contraseña en la BD debe estar "hasheada". NUNCA guardes contraseñas en texto plano.
+    // Verificamos la contraseña cifrada
     if (password_verify($password, $usuario['contrasena_hash'])) {
-        // Contraseña correcta: Iniciar sesión
-        $_SESSION['user_id'] = $usuario['id'];
+        // Contraseña Correcta
+        $_SESSION['user_id'] = $usuario['id_personal'];
         $_SESSION['user_nombre'] = $usuario['nombre'];
-        $_SESSION['user_rol'] = $usuario['rol'];
+        $_SESSION['user_rol'] = $usuario['cargo'];
 
-        // Envía una respuesta de éxito con los datos del usuario
         echo json_encode([
             'success' => true,
             'user' => [
                 'nombre' => $usuario['nombre'],
                 'email' => $usuario['email'],
-                'rol' => $usuario['rol']
+                'rol' => $usuario['cargo']
             ]
         ]);
-
     } else {
-        // Contraseña incorrecta
-        echo json_encode(['success' => false, 'message' => 'Contraseña incorrecta.']);
+        // Contraseña Incorrecta
+        echo json_encode(['success' => false, 'message' => 'Documento o contraseña incorrectos.']);
     }
 } else {
     // Usuario no encontrado
-    echo json_encode(['success' => false, 'message' => 'Usuario no encontrado.']);
+    echo json_encode(['success' => false, 'message' => 'Documento o contraseña incorrectos.']);
 }
 
-// Cierra la sentencia y la conexión
 $stmt->close();
 $conexion->close();
 ?>
