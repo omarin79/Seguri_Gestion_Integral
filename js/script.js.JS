@@ -602,33 +602,64 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Ensure the general novedades consultation form is targeted correctly
-        const novedadesConsultaForm = document.getElementById('novedades-consulta-form');
-        if (novedadesConsultaForm) {
-            novedadesConsultaForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const tipoNovedad = document.getElementById('consulta-novedad-tipo').value;
-                const fechaInicio = document.getElementById('consulta-novedad-fecha-inicio').value;
-                const fechaFin = document.getElementById('consulta-novedad-fecha-fin').value;
-                const cedula = document.getElementById('consulta-novedad-cedula').value;
-                const puesto = document.getElementById('consulta-novedad-puesto').value;
+       // Dentro de la etiqueta <script> de tu index.html
 
-                const resultsDiv = document.getElementById('novedades-results');
-                resultsDiv.innerHTML = `<p>Buscando novedades de tipo "${tipoNovedad}" entre ${fechaInicio} y ${fechaFin}...</p>`;
-                // En un escenario real, aquí se haría una llamada a la API y se mostrarían los resultados.
-                setTimeout(() => { // Simula una respuesta de API
-                    resultsDiv.innerHTML = `
-                        <h3>Resultados de Novedades (Simulados):</h3>
-                        <ul>
-                            <li><strong>Ausencia de Unidad</strong> - CC: 123456789 - Puesto: Recepción ABC - Fecha: 2025-05-28</li>
-                            <li><strong>Incapacidad</strong> - CC: 80048004 - Tipo: Enfermedad General - Fecha: 2025-05-27</li>
-                            <li><strong>Licencia Remunerada</strong> - CC: 1013656722 - Motivo: Luto - Fecha: 2025-05-25</li>
-                            <li><strong>Unidad Evadida</strong> - CC: 987654321 - Puesto: Portería La Floresta - Fecha: 2025-05-29</li>
-                            <li><strong>Condición Insegura</strong> - Ubicación: Pasillo Principal - Fecha: 2025-05-30</li>
-                        </ul>
-                    `;
-                }, 1500);
-            });
+const novedadesConsultaForm = document.getElementById('novedades-consulta-form');
+if (novedadesConsultaForm) {
+    novedadesConsultaForm.addEventListener('submit', async function(event) { // Función async
+        event.preventDefault();
+
+        // Obtenemos los valores de los filtros
+        const tipoNovedad = document.getElementById('consulta-novedad-tipo').value;
+        const cedula = document.getElementById('consulta-novedad-cedula').value;
+        const puesto = document.getElementById('consulta-novedad-puesto').value;
+        const resultsDiv = document.getElementById('novedades-results');
+        
+        resultsDiv.innerHTML = '<p>Buscando novedades en el servidor...</p>';
+
+        // --- INICIO DE LA IMPLEMENTACIÓN DE LA API ---
+
+        try {
+            // Construimos la URL con los parámetros de consulta (filtros)
+            const params = new URLSearchParams();
+            if (tipoNovedad) params.append('tipo_novedad', tipoNovedad);
+            if (cedula) params.append('cedula', cedula);
+            if (puesto) params.append('puesto', puesto);
+
+            const url = `http://localhost:3000/api/operativo/novedades?${params.toString()}`;
+
+            // Hacemos la petición GET a nuestra API
+            const response = await fetch(url);
+            const novedades = await response.json(); // La respuesta es un arreglo de novedades
+
+            if (!response.ok) {
+                throw new Error('Error al consultar las novedades.');
+            }
+
+            // Mostramos los resultados en el HTML
+            if (novedades.length === 0) {
+                resultsDiv.innerHTML = '<p>No se encontraron novedades con los filtros seleccionados.</p>';
+            } else {
+                let htmlResultados = '<h3>Resultados de la Consulta:</h3><ul>';
+                novedades.forEach(novedad => {
+                    htmlResultados += `<li>
+                        <strong>Tipo:</strong> ${novedad.tipo_novedad} <br>
+                        <strong>Cédula:</strong> ${novedad.cedula || novedad.cedula_empleado || 'N/A'} <br>
+                        <strong>Fecha:</strong> ${new Date(novedad.fecha_registro).toLocaleString()} <br>
+                        <em><pre>${JSON.stringify(novedad, null, 2)}</pre></em>
+                    </li>`;
+                });
+                htmlResultados += '</ul>';
+                resultsDiv.innerHTML = htmlResultados;
+            }
+
+        } catch (error) {
+            console.error('Error al consultar novedades:', error);
+            resultsDiv.innerHTML = `<p style="color: red;">Hubo un error al conectar con el servidor: ${error.message}</p>`;
         }
+        // --- FIN DE LA IMPLEMENTACIÓN DE LA API ---
+    });
+}
         // ... (rest of your JavaScript code, including validPageHashes and DOMContentLoaded) ...
     }
 });
