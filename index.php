@@ -1,3 +1,23 @@
+<?php
+require_once 'backend/backenddb.php';
+
+$empleados = [];
+$sql = "SELECT documento, nombre, email, cargo, telefono, direccion FROM personal";
+$resultado = $conexion->query($sql);
+
+if ($resultado->num_rows > 0) {
+    while($fila = $resultado->fetch_assoc()) {
+        $empleados[$fila["documento"]] = [
+            "nombre" => $fila["nombre"],
+            "email" => $fila["email"],
+            "rol" => $fila["cargo"],
+            "telefono" => $fila["telefono"],
+            "direccion" => $fila["direccion"]
+        ];
+    }
+}
+$conexion->close();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -987,11 +1007,8 @@
 
         // --- Datos simulados de empleados (para autocompletar y mostrar info) ---
         // En una aplicación real, estos datos vendrían de una API/backend y se consultarían desde el CSV.
-        const empleadosDB = {
-            '1013656722': { nombre: 'JULIÁN ESTEBAN HERNÁNDEZ GARCÍA', email: 'julianh@email.com', rol: 'Operativo', telefono: '3001234567', direccion: 'Calle Falsa 123' },
-            '80048004': { nombre: 'OMAR ACONCHA CASTIBLANCO', email: 'omaracon@securigestion.com.co', rol: 'Supervisor', telefono: '3109876543', direccion: 'Avenida Siempre Viva 742' },
-            '123456789': { nombre: 'JUAN PÉREZ GÓMEZ', email: 'juanp@email.com', rol: 'Administrativo', telefono: '3205550011', direccion: 'Carrera 10 # 20-30' }
-        };
+        const empleadosDB = <?php echo json_encode($empleados); ?>;
+        
         let currentUserCedula = null; // Para almacenar la cédula del usuario logueado
 
         // Función para mostrar una página específica y ocultar las demás
@@ -1066,32 +1083,40 @@
         const loginForm = document.getElementById('login-form');
         if (loginForm) {
             loginForm.addEventListener('submit', function(event) {
-                event.preventDefault(); 
-                const usernameInput = document.getElementById('username');
-                const passwordInput = document.getElementById('password');
+                event.preventDefault();
+                const formData = new FormData(loginForm);
                 const errorMessageDiv = document.getElementById('login-error-message');
-                const username = usernameInput.value; // Usar el valor ingresado como cédula para la simulación
-                const password = passwordInput.value;
 
-                // Simulación: cualquier cédula de empleadosDB con contraseña 'contraseña' es válida
-                if (empleadosDB[username] && password === 'contraseña') {
-                    errorMessageDiv.style.display = 'none';
-                    currentUserCedula = username; // Guardar cédula del usuario logueado
-                    const user = empleadosDB[username];
-
-                    if (loggedInUsernameSpan) {
-                        loggedInUsernameSpan.textContent = user.nombre.split(' ')[0]; // Mostrar solo el primer nombre
+                fetch('backend/backendlogin.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        errorMessageDiv.style.display = 'none';
+                        const user = data.user;
+                        currentUserCedula = document.getElementById('username').value; // Guardar la cédula
+                        
+                        if (loggedInUsernameSpan) {
+                            loggedInUsernameSpan.textContent = user.nombre.split(' ')[0]; // Mostrar solo el primer nombre
+                        }
+                        if(document.getElementById('dashboard-username')) document.getElementById('dashboard-username').textContent = user.nombre;
+                        if(document.getElementById('dashboard-email')) document.getElementById('dashboard-email').textContent = user.email;
+                        if(document.getElementById('dashboard-role')) document.getElementById('dashboard-role').textContent = user.rol;
+                        
+                        showPage('inicio-page');
+                    } else {
+                        errorMessageDiv.textContent = data.message;
+                        errorMessageDiv.style.display = 'block';
+                        currentUserCedula = null;
                     }
-                    if(document.getElementById('dashboard-username')) document.getElementById('dashboard-username').textContent = user.nombre;
-                    if(document.getElementById('dashboard-email')) document.getElementById('dashboard-email').textContent = user.email;
-                    if(document.getElementById('dashboard-role')) document.getElementById('dashboard-role').textContent = user.rol;
-                    
-                    showPage('inicio-page'); 
-                } else {
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    errorMessageDiv.textContent = 'Error de conexión con el servidor.';
                     errorMessageDiv.style.display = 'block';
-                    errorMessageDiv.textContent = 'Nombre de usuario (cédula) o contraseña incorrectos.';
-                    currentUserCedula = null;
-                }
+                });
             });
         }
 
