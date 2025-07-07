@@ -1,22 +1,30 @@
 <?php
-require_once 'backend/backenddb.php';
+// --- INICIO: Bloque PHP para cargar datos ---
+require_once 'backend/backenddb.php'; // Conecta a la base de datos
 
-$empleados = [];
-$sql = "SELECT documento, nombre, email, cargo, telefono, direccion FROM personal";
-$resultado = $conexion->query($sql);
+$empleados_php = []; // Un array para guardar los empleados
 
-if ($resultado->num_rows > 0) {
-    while($fila = $resultado->fetch_assoc()) {
-        $empleados[$fila["documento"]] = [
-            "nombre" => $fila["nombre"],
-            "email" => $fila["email"],
-            "rol" => $fila["cargo"],
-            "telefono" => $fila["telefono"],
-            "direccion" => $fila["direccion"]
-        ];
+// Nos aseguramos de que la conexión exista antes de usarla
+if (isset($conexion)) {
+    $sql = "SELECT documento, nombre, email, cargo, telefono, direccion FROM personal";
+    $resultado = $conexion->query($sql);
+
+    if ($resultado && $resultado->num_rows > 0) {
+        while($fila = $resultado->fetch_assoc()) {
+            // Usamos el 'documento' como clave para que JavaScript lo encuentre fácil
+            $empleados_php[$fila["documento"]] = [
+                "nombre" => $fila["nombre"],
+                "email" => $fila["email"],
+                "rol" => $fila["cargo"],
+                "telefono" => $fila["telefono"],
+                "direccion" => $fila["direccion"]
+            ];
+        }
     }
+    // Cerramos la conexión después de usarla
+    $conexion->close();
 }
-$conexion->close();
+// --- FIN: Bloque PHP ---
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -963,8 +971,8 @@ $conexion->close();
                     <label for="puesto">1. Seleccionar puesto a visitar:</label>
                     <select id="puesto" name="puesto" required>
                         <option value="">Seleccione...</option>
-                        <option value="1">Recepción Principal Edificio ABC</option>
-                        <option value="2">Portería Vehicular La Floresta</option>
+                        <option value="1">Ied fernando soto aparicio sede a</option>
+                        <option value="2">ied manuel zapata</option>
                     </select>
 
                     <fieldset>
@@ -1005,9 +1013,8 @@ $conexion->close();
         const appFooter = document.getElementById('app-footer');
         const loggedInUsernameSpan = document.getElementById('logged-in-username'); // Span para el nombre en el header
 
-        // --- Datos simulados de empleados (para autocompletar y mostrar info) ---
-        // En una aplicación real, estos datos vendrían de una API/backend y se consultarían desde el CSV.
-        const empleadosDB = <?php echo json_encode($empleados); ?>;
+        // Los datos de los empleados ahora vienen del bloque PHP de arriba.
+const empleadosDB = <?php echo json_encode($empleados_php); ?>;
         
         let currentUserCedula = null; // Para almacenar la cédula del usuario logueado
 
@@ -1081,44 +1088,105 @@ $conexion->close();
 
 
         const loginForm = document.getElementById('login-form');
-        if (loginForm) {
-            loginForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const formData = new FormData(loginForm);
-                const errorMessageDiv = document.getElementById('login-error-message');
+if (loginForm) {
+    loginForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(loginForm);
+        const errorMessageDiv = document.getElementById('login-error-message');
+        
+        // Petición real al backend
+        fetch('backend/backendlogin.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                errorMessageDiv.style.display = 'none';
+                currentUserCedula = formData.get('username'); // Guardamos la cédula
+                const user = data.user;
+                
+                // Actualizar la UI con datos reales
+                if(document.getElementById('logged-in-username')) document.getElementById('logged-in-username').textContent = user.nombre.split(' ')[0];
+                if(document.getElementById('dashboard-username')) document.getElementById('dashboard-username').textContent = user.nombre;
+                if(document.getElementById('dashboard-email')) document.getElementById('dashboard-email').textContent = user.email;
+                if(document.getElementById('dashboard-role')) document.getElementById('dashboard-role').textContent = user.rol;
+                
+                showPage('inicio-page');
+            } else {
+                errorMessageDiv.textContent = data.message;
+                errorMessageDiv.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            errorMessageDiv.textContent = 'Error de conexión con el servidor.';
+            errorMessageDiv.style.display = 'block';
+        });
+    });
+}
+Ahora, busca y reemplaza la función del formulario de registro:
 
-                fetch('backend/backendlogin.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        errorMessageDiv.style.display = 'none';
-                        const user = data.user;
-                        currentUserCedula = document.getElementById('username').value; // Guardar la cédula
-                        
-                        if (loggedInUsernameSpan) {
-                            loggedInUsernameSpan.textContent = user.nombre.split(' ')[0]; // Mostrar solo el primer nombre
-                        }
-                        if(document.getElementById('dashboard-username')) document.getElementById('dashboard-username').textContent = user.nombre;
-                        if(document.getElementById('dashboard-email')) document.getElementById('dashboard-email').textContent = user.email;
-                        if(document.getElementById('dashboard-role')) document.getElementById('dashboard-role').textContent = user.rol;
-                        
-                        showPage('inicio-page');
-                    } else {
-                        errorMessageDiv.textContent = data.message;
-                        errorMessageDiv.style.display = 'block';
-                        currentUserCedula = null;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    errorMessageDiv.textContent = 'Error de conexión con el servidor.';
-                    errorMessageDiv.style.display = 'block';
-                });
-            });
+JavaScript
+
+// BUSCA ESTE BLOQUE:
+const registroForm = document.getElementById('registro-form');
+if (registroForm) {
+    registroForm.addEventListener('submit', function(event) {
+        event.preventDefault(); 
+        alert('Registro simulado exitoso. Por favor, inicie sesión.'); 
+        showPage('login-page');
+        this.reset(); 
+    });
+}
+
+// Y REEMPLÁZALO CON ESTE BLOQUE NUEVO:
+const registroForm = document.getElementById('registro-form');
+if (registroForm) {
+    registroForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const password = document.getElementById('password-registro').value;
+        const confirmPassword = document.getElementById('confirmar-password').value;
+        const errorDiv = document.getElementById('registro-error-message'); // Asegúrate de tener un div con este ID en tu HTML de registro.
+
+        if (password !== confirmPassword) {
+            if(errorDiv) {
+                errorDiv.textContent = 'Las contraseñas no coinciden.';
+                errorDiv.style.display = 'block';
+            }
+            return;
         }
+
+        const formData = new FormData(this);
+        
+        // Petición real al backend de registro
+        fetch('backend/registrar_usuario.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message); // Muestra "¡Registro exitoso!..."
+                registroForm.reset();
+                showPage('login-page'); // Redirige al login
+            } else {
+                if(errorDiv) {
+                    errorDiv.textContent = data.message;
+                    errorDiv.style.display = 'block';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            if(errorDiv) {
+                errorDiv.textContent = 'Error de conexión con el servidor.';
+                errorDiv.style.display = 'block';
+            }
+        });
+    });
+}
 
         const registroForm = document.getElementById('registro-form');
         if (registroForm) {
