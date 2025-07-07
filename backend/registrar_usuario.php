@@ -1,58 +1,44 @@
 <?php
-require_once 'backenddb.php'; // Reutiliza tu conexión a la BD
+require_once '../includes/db.php'; // Asegúrate que la ruta a tu conexión sea correcta
 
 header('Content-Type: application/json');
 
-// Recibimos los datos del formulario de registro
 $nombre = $_POST['nombre-completo'] ?? '';
 $email = $_POST['email-registro'] ?? '';
 $password = $_POST['password-registro'] ?? '';
-$documento = $_POST['documento-registro'] ?? ''; // Suponiendo que se agregará un campo para el documento
+$documento = $_POST['documento-registro'] ?? ''; 
 
-// Validación básica (puedes añadir más validaciones)
+// Validación de campos vacíos
 if (empty($nombre) || empty($email) || empty($password) || empty($documento)) {
     echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios.']);
     exit;
 }
 
-// --- Comprobación para evitar correos duplicados ---
-$sql_check = "SELECT email FROM personal WHERE email = ?";
-$stmt_check = $conexion->prepare($sql_check);
-$stmt_check->bind_param("s", $email);
-$stmt_check->execute();
-$resultado_check = $stmt_check->get_result();
-
-if ($resultado_check->num_rows > 0) {
-    echo json_encode(['success' => false, 'message' => 'El correo electrónico ya está registrado.']);
-    $stmt_check->close();
-    $conexion->close();
-    exit;
-}
-$stmt_check->close();
-
-// --- Encriptación de la contraseña (MUY IMPORTANTE) ---
+// Encriptar la contraseña para seguridad
 $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-// --- Insertar el nuevo usuario en la base de datos ---
-// Asumimos un cargo por defecto, puedes cambiarlo según tu lógica
-$cargo_defecto = 'VIGILANTE';
+// Preparar la inserción a la base de datos
+$sql = "INSERT INTO personal (documento, nombre, email, contrasena_hash, cargo) VALUES (?, ?, ?, ?, 'Operativo')";
+$stmt = $conexion->prepare($sql);
 
-$sql_insert = "INSERT INTO personal (documento, nombre, email, contrasena_hash, cargo) VALUES (?, ?, ?, ?, ?)";
-$stmt_insert = $conexion->prepare($sql_insert);
-
-if ($stmt_insert === false) {
-    echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta de inserción.']);
+if ($stmt === false) {
+    echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta.']);
     exit();
 }
 
-$stmt_insert->bind_param("sssss", $documento, $nombre, $email, $password_hash, $cargo_defecto);
+$stmt->bind_param("ssss", $documento, $nombre, $email, $password_hash);
 
-if ($stmt_insert->execute()) {
-    echo json_encode(['success' => true, 'message' => '¡Registro exitoso! Ahora puedes iniciar sesión.']);
+if ($stmt->execute()) {
+    echo json_encode(['success' => true, 'message' => '¡Registro exitoso! Ahora puede iniciar sesión.']);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Error al registrar el usuario. Por favor, inténtelo de nuevo.']);
+    // Manejar error de duplicado (si el documento o email ya existen)
+    if ($conexion->errno == 1062) {
+         echo json_encode(['success' => false, 'message' => 'El documento o correo electrónico ya existen.']);
+    } else {
+         echo json_encode(['success' => false, 'message' => 'Error al registrar el usuario.']);
+    }
 }
 
-$stmt_insert->close();
+$stmt->close();
 $conexion->close();
 ?>
